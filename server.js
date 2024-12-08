@@ -47,6 +47,36 @@ io.on("connection", (socket) => {
     console.log(`${data.username} answered: ${data.answer}`);
     io.emit("answerReceived", data);
   });
+
+  socket.on("startGameMemory", () => {
+    const EMOJIS = [
+      "/images/rubber-duck.png",
+      "/images/smiling.png",
+      "/images/golf-club.png",
+      "/images/dolphin.png",
+      "/images/Tea-Rex.png",
+      "/images/koala.png",
+    ];
+    const duplicatedEmojis = [...EMOJIS, ...EMOJIS];
+    const shuffledEmojis = duplicatedEmojis.sort(() => Math.random() - 0.5);
+    gameState = {
+      cards: shuffledEmojis.map((emoji, index) => ({
+        id: index,
+        emoji,
+        isFlipped: false,
+        isMatched: false,
+      })),
+      moves: 0,
+      winner: null,
+    };
+    io.emit("gameStartedMemory", gameState);
+  });
+  socket.on("gameCompleteMemory", (winner) => {
+    if (winner) {
+      io.emit("gameCompletedMemory", { winner }); // Broadcast the winner
+      console.log(`${winner} completed the memory game!`);
+    }
+  });
 });
 
 const PORT = process.env.PORT || 3003;
