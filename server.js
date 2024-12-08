@@ -48,6 +48,10 @@ io.on("connection", (socket) => {
     io.emit("answerReceived", data);
   });
 
+  socket.on("gameActive", (gameNo) => {
+    io.emit("gameActive", gameNo);
+  });
+
   socket.on("startGameMemory", () => {
     const EMOJIS = [
       "/images/rubber-duck.png",
