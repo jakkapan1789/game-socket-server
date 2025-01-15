@@ -60,6 +60,8 @@ io.on("connection", (socket) => {
       "/images/dolphin.png",
       "/images/Tea-Rex.png",
       "/images/koala.png",
+      "/images/cat.png",
+      "/images/dog.png",
     ];
     const duplicatedEmojis = [...EMOJIS, ...EMOJIS];
     const shuffledEmojis = duplicatedEmojis.sort(() => Math.random() - 0.5);
