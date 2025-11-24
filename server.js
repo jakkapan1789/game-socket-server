@@ -327,60 +327,117 @@ io.on("connection", (socket) => {
   });
 
   // ผู้เล่นตอบ: { username, roundId, choiceIndex }
+  // socket.on("answerLogo", ({ username, roundId, choiceIndex }) => {
+  //   if (!currentLogoRound) return;
+  //   if (roundId !== currentLogoRound.roundId) return;
+
+  //   const now = Date.now();
+  //   if (now > currentLogoRound.expiresAt) {
+  //     console.log(`⏰ Answer too late from ${username}`);
+  //     return;
+  //   }
+
+  //   const { choices, startedAt, answeredUsers, correctType } = currentLogoRound;
+  //   const choice = choices[choiceIndex];
+  //   if (!choice) return;
+
+  //   // ห้ามตอบซ้ำ
+  //   if (answeredUsers.includes(username)) return;
+
+  //   // ✅ ตัดสินถูก/ผิดตามโหมดที่ Admin เลือก
+  //   const isCorrect =
+  //     (correctType === "real" && choice.isReal) ||
+  //     (correctType === "fake" && !choice.isReal);
+
+  //   if (!isCorrect) {
+  //     console.log(
+  //       `❌ ${username} answered wrong in Logo Quiz (mode=${correctType})`
+  //     );
+  //     answeredUsers.push(username); // นับว่าใช้สิทธิ์ตอบแล้ว
+  //     return;
+  //   }
+
+  //   const elapsedSec = (now - startedAt) / 1000;
+
+  //   let points = 1;
+  //   if (elapsedSec <= 2) {
+  //     points = 3; // 8–10 วินาทีแรก
+  //   } else if (elapsedSec <= 4) {
+  //     points = 2; // 6–7 วิ
+  //   } else {
+  //     points = 1; // น้อยกว่านั้น แต่ยังไม่หมดเวลา
+  //   }
+
+  //   if (!logoScores[username]) logoScores[username] = 0;
+  //   logoScores[username] += points;
+  //   answeredUsers.push(username);
+
+  //   console.log(
+  //     `✅ ${username} correct in Logo Quiz (+${points}) total=${logoScores[username]}`
+  //   );
+
+  //   io.emit("scoreUpdatedLogo", {
+  //     username,
+  //     score: logoScores[username],
+  //     points,
+  //   });
+  //   io.emit("logoLeaderboard", getLogoLeaderboard());
+  // });
   socket.on("answerLogo", ({ username, roundId, choiceIndex }) => {
     if (!currentLogoRound) return;
     if (roundId !== currentLogoRound.roundId) return;
 
     const now = Date.now();
-    if (now > currentLogoRound.expiresAt) {
-      console.log(`⏰ Answer too late from ${username}`);
-      return;
-    }
+    if (now > currentLogoRound.expiresAt) return;
 
     const { choices, startedAt, answeredUsers, correctType } = currentLogoRound;
     const choice = choices[choiceIndex];
     if (!choice) return;
 
-    // ห้ามตอบซ้ำ
     if (answeredUsers.includes(username)) return;
 
-    // ✅ ตัดสินถูก/ผิดตามโหมดที่ Admin เลือก
     const isCorrect =
       (correctType === "real" && choice.isReal) ||
       (correctType === "fake" && !choice.isReal);
 
+    // ❌ ตอบผิด — หักคะแนน -1
+    // ❌ ตอบผิด — หักคะแนน -1 (แต่ไม่ต่ำกว่า 0)
     if (!isCorrect) {
-      console.log(
-        `❌ ${username} answered wrong in Logo Quiz (mode=${correctType})`
-      );
-      answeredUsers.push(username); // นับว่าใช้สิทธิ์ตอบแล้ว
+      console.log(`❌ ${username} answered wrong in Logo Quiz`);
+
+      if (!logoScores[username]) logoScores[username] = 0;
+
+      logoScores[username] = Math.max(logoScores[username] - 1, 0); // ⭐ ไม่ต่ำกว่า 0
+
+      answeredUsers.push(username);
+
+      io.emit("scoreUpdatedLogo", {
+        username,
+        score: logoScores[username],
+        points: -1, // ⭐ ส่งค่า -1 ให้ Frontend แสดง alert
+      });
+
+      io.emit("logoLeaderboard", getLogoLeaderboard());
       return;
     }
 
+    // 🎯 ตอบถูก (เหมือนเดิม)
     const elapsedSec = (now - startedAt) / 1000;
-
     let points = 1;
-    if (elapsedSec <= 2) {
-      points = 3; // 8–10 วินาทีแรก
-    } else if (elapsedSec <= 4) {
-      points = 2; // 6–7 วิ
-    } else {
-      points = 1; // น้อยกว่านั้น แต่ยังไม่หมดเวลา
-    }
+    if (elapsedSec <= 2) points = 3;
+    else if (elapsedSec <= 4) points = 2;
 
     if (!logoScores[username]) logoScores[username] = 0;
     logoScores[username] += points;
-    answeredUsers.push(username);
 
-    console.log(
-      `✅ ${username} correct in Logo Quiz (+${points}) total=${logoScores[username]}`
-    );
+    answeredUsers.push(username);
 
     io.emit("scoreUpdatedLogo", {
       username,
       score: logoScores[username],
       points,
     });
+
     io.emit("logoLeaderboard", getLogoLeaderboard());
   });
 
