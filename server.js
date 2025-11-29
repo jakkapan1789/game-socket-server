@@ -68,6 +68,11 @@ const LOGO_DATA = [
     real: "/logos/lion-real.png",
     fake: "/logos/lion-fake.jpeg",
   },
+  {
+    brand: "Zebra",
+    real: "/logos/zebra-real.png",
+    fake: "/logos/zebra-fake.png",
+  },
 ];
 
 let logoScores = {}; // { username: score }
