@@ -236,6 +236,31 @@ io.on("connection", (socket) => {
     io.emit("gameActive", 2);
   });
 
+  socket.on("syncBingoState", ({ username }) => {
+    // ไม่มีเกมกำลังเล่น
+    if (!gameActive || currentGame !== 2) {
+      socket.emit("bingoSyncResult", { status: "NO_GAME" });
+      return;
+    }
+
+    // เกมกำลังเล่น แต่ user ไม่มี board → เข้าไม่ทัน
+    if (!bingoBoards[username]) {
+      socket.emit("bingoSyncResult", {
+        status: "GAME_IN_PROGRESS",
+        reason: "NO_BOARD",
+      });
+      return;
+    }
+
+    // เกมกำลังเล่น และ user อยู่ใน room เดิม
+    socket.emit("bingoSyncResult", {
+      status: "SYNC",
+      game_id: bingoGameId,
+      board: bingoBoards[username],
+      drawnNumbers,
+    });
+  });
+
   socket.on("requestNewBingoBoard", ({ username }) => {
     // ถ้ามีเลขออกแล้ว → ห้ามเปลี่ยน
     if (drawnNumbers.length > 0) {
