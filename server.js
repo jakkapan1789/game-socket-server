@@ -73,11 +73,41 @@ const LOGO_DATA = [
     real: "/logos/zebra-real.png",
     fake: "/logos/zebra-fake.png",
   },
+  {
+    brand: "Cat",
+    real: "/logos/cat-like.png",
+    fake: "/logos/lion-like.png",
+  },
+  {
+    brand: "Raccoon",
+    real: "/logos/raccoon-mafia.png",
+    fake: "/logos/cat-mafia.png",
+  },
+  {
+    brand: "Panda",
+    real: "/logos/cute-panda.png",
+    fake: "/logos/cat-panda.png",
+  },
+  {
+    brand: "Strong Cat",
+    real: "/logos/strong-cat.png",
+    fake: "/logos/strong-panda.png",
+  },
+  {
+    brand: "Microsoft",
+    real: "/logos/microsoft-real.png",
+    fake: "/logos/microsoft-fake.png",
+  },
+  {
+    brand: "Dog",
+    real: "/logos/dog-real.png",
+    fake: "/logos/dog-fake.png",
+  },
 ];
 
-let logoScores = {}; // { username: score }
+let logoScores = {};
 let currentLogoRound = null;
-const LOGO_DURATION_MS = 10000; // 10 วินาที
+const LOGO_DURATION_MS = 10000;
 
 // Helper: Unique random numbers per board
 const generateUniqueBingoBoard = (username, size = 5) => {
