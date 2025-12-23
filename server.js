@@ -103,6 +103,31 @@ const LOGO_DATA = [
     real: "/logos/dog-real.png",
     fake: "/logos/dog-fake.png",
   },
+  {
+    brand: "Burger King",
+    real: "/logos/bgk-real.png",
+    fake: "/logos/bgk-fake.png",
+  },
+  {
+    brand: "Google Drive",
+    real: "/logos/google-drive.png",
+    fake: "/logos/google-drive-fake.png",
+  },
+  {
+    brand: "Youtube",
+    real: "/logos/youtube.png",
+    fake: "/logos/youtube-fake.png",
+  },
+  {
+    brand: "GMAIL",
+    real: "/logos/gmail.png",
+    fake: "/logos/gmail-fake.png",
+  },
+  {
+    brand: "Google Map",
+    real: "/logos/google-map.png",
+    fake: "/logos/google-map-fake.png",
+  },
 ];
 
 let logoScores = {};
